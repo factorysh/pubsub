@@ -6,16 +6,17 @@ import (
 	"testing"
 	"time"
 
+	_event "github.com/factorysh/pubsub/event"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestSimpleEvent(t *testing.T) {
 	buffer := &bytes.Buffer{}
-	evt := &Event{
+	evt := &_event.Event{
 		Event: "beuha",
 		Data:  "aussi",
 	}
-	err := evt.Write(buffer)
+	err := WriteEvent(buffer, evt)
 	assert.NoError(t, err)
 	for _, expected := range []string{"event: beuha\n", "data: aussi\n", "\n"} {
 		line, err := buffer.ReadString('\n')
@@ -23,16 +24,15 @@ func TestSimpleEvent(t *testing.T) {
 		assert.Equal(t, expected, line)
 	}
 }
-
 func TestFullEvent(t *testing.T) {
 	buffer := &bytes.Buffer{}
-	evt := &Event{
+	evt := &_event.Event{
 		Event: "beuha",
 		Data:  "aussi",
 		Id:    "42",
 		Retry: time.Second / 10,
 	}
-	err := evt.Write(buffer)
+	err := WriteEvent(buffer, evt)
 	assert.NoError(t, err)
 	datas := make(map[string]string)
 	for {

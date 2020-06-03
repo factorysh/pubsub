@@ -1,4 +1,4 @@
-package sse
+package event
 
 import (
 	"context"

@@ -5,18 +5,11 @@ import (
 	"io"
 	"strings"
 	"time"
+
+	_event "github.com/factorysh/pubsub/event"
 )
 
-type Event struct {
-	dataExists bool
-	Data       string
-	Id         string
-	Event      string
-	Retry      time.Duration
-	Ending     bool
-}
-
-func (e *Event) Write(w io.Writer) error {
+func WriteEvent(w io.Writer, e *_event.Event) error {
 	if e.Id != "" {
 		_, err := fmt.Fprintf(w, "id: %s\n", e.Id)
 		if err != nil {

@@ -5,10 +5,11 @@ import (
 	"fmt"
 	"net/http"
 
+	_event "github.com/factorysh/pubsub/event"
 	log "github.com/sirupsen/logrus"
 )
 
-func HandleSSE(ctx context.Context, e *Events, w http.ResponseWriter, l *log.Entry, lei int) {
+func HandleSSE(ctx context.Context, e *_event.Events, w http.ResponseWriter, l *log.Entry, lei int) {
 	flusher, ok := w.(http.Flusher)
 	if !ok {
 		http.Error(w, "Streaming unsupported!", http.StatusInternalServerError)
@@ -24,12 +25,12 @@ func HandleSSE(ctx context.Context, e *Events, w http.ResponseWriter, l *log.Ent
 	h.Set("Connection", "keep-alive")
 	flusher.Flush()
 	l.Info("Starting SSE")
-	var evt *Event
+	var evt *_event.Event
 	for {
 		select {
 		case evt = <-evts:
 			evt.Id = fmt.Sprintf("%d", lei)
-			evt.Write(w)
+			WriteEvent(w, evt)
 			flusher.Flush()
 			lei++
 			if evt.Ending {

@@ -7,6 +7,8 @@ import (
 	"strconv"
 	"strings"
 	"time"
+
+	_event "github.com/factorysh/pubsub/event"
 )
 
 type SSEReader struct {
@@ -17,8 +19,8 @@ func NewSSEReader(r io.Reader) *SSEReader {
 	return &SSEReader{bufio.NewScanner(r)}
 }
 
-func (s *SSEReader) Read() (*Event, error) {
-	evt := &Event{}
+func (s *SSEReader) Read() (*_event.Event, error) {
+	evt := &_event.Event{}
 	for s.scanner.Scan() {
 		line := s.scanner.Text()
 		if line == "" {
@@ -38,7 +40,7 @@ func (s *SSEReader) Read() (*Event, error) {
 	return nil, io.EOF
 }
 
-func event(evt *Event, key, value string) {
+func event(evt *_event.Event, key, value string) {
 	if strings.HasPrefix(value, " ") {
 		value = value[1:]
 	}
@@ -57,11 +59,11 @@ func event(evt *Event, key, value string) {
 	case "event":
 		evt.Event = value
 	case "data":
-		if evt.dataExists {
+		if evt.DataExists {
 			evt.Data = fmt.Sprintf("%s\n%s", evt.Data, value)
 		} else {
 			evt.Data = value
-			evt.dataExists = true
+			evt.DataExists = true
 		}
 	}
 }
