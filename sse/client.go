@@ -59,11 +59,10 @@ func event(evt *_event.Event, key, value string) {
 	case "event":
 		evt.Event = value
 	case "data":
-		if evt.DataExists {
+		if evt.Data != "" {
 			evt.Data = fmt.Sprintf("%s\n%s", evt.Data, value)
 		} else {
 			evt.Data = value
-			evt.DataExists = true
 		}
 	}
 }

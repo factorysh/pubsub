@@ -5,10 +5,9 @@ import (
 )
 
 type Event struct {
-	DataExists bool
-	Data       string
-	Id         string
-	Event      string
-	Retry      time.Duration
-	Ending     bool
+	Data   string
+	Id     string
+	Event  string
+	Retry  time.Duration
+	Ending bool
 }
