@@ -46,3 +46,41 @@ func TestEvents(t *testing.T) {
 	assert.Equal(t, 2, evts.Size())
 	assert.Len(t, evts.Since(0), 2)
 }
+
+func TestMoreEvents(t *testing.T) {
+	evts := NewEvents()
+	evts.SetPrems(func(ctx context.Context) *Event {
+		return &Event{
+			Data: "prems",
+		}
+	})
+	wait := &sync.WaitGroup{}
+	wait.Add(4)
+	ctx1 := context.TODO()
+	client1 := evts.Subscribe(ctx1, 0)
+	go func() {
+		evt := <-client1
+		assert.Equal(t, "prems", evt.Data)
+		wait.Done()
+		evt = <-client1
+		assert.Equal(t, "hop", evt.Data)
+		wait.Done()
+	}()
+
+	evts.Append(&Event{
+		Data: "hop",
+	})
+
+	ctx2 := context.TODO()
+	client2 := evts.Subscribe(ctx2, 0)
+	go func() {
+		evt := <-client2
+		assert.Equal(t, "prems", evt.Data)
+		wait.Done()
+		evt = <-client2
+		assert.Equal(t, "hop", evt.Data)
+		wait.Done()
+	}()
+
+	wait.Wait()
+}

@@ -6,6 +6,7 @@ import (
 )
 
 type Events struct {
+	prems     func(context.Context) *Event
 	events    []*Event
 	bid       int64
 	broadcast map[int64]*subscriber
@@ -25,6 +26,10 @@ func NewEvents() *Events {
 	}
 }
 
+func (e *Events) SetPrems(prems func(context.Context) *Event) {
+	e.prems = prems
+}
+
 func (e *Events) nextBid() int64 {
 	e.block.Lock()
 	defer e.block.Unlock()
@@ -42,6 +47,9 @@ func (e *Events) Subscribe(ctx context.Context, since int) chan *Event {
 	s := &subscriber{
 		events: make(chan *Event, 100),
 		ctx:    ctx,
+	}
+	if e.prems != nil {
+		s.events <- e.prems(ctx)
 	}
 	bid := e.nextBid()
 	e.block.Lock()
