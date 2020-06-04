@@ -44,6 +44,7 @@ func (e *Events) Since(since int) []*Event {
 }
 
 func (e *Events) Subscribe(ctx context.Context, since int) chan *Event {
+	bid := e.nextBid()
 	s := &subscriber{
 		events: make(chan *Event, 100),
 		ctx:    ctx,
@@ -51,7 +52,6 @@ func (e *Events) Subscribe(ctx context.Context, since int) chan *Event {
 	if e.prems != nil {
 		s.events <- e.prems(ctx)
 	}
-	bid := e.nextBid()
 	e.block.Lock()
 	e.broadcast[bid] = s
 	e.block.Unlock()

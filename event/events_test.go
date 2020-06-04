@@ -17,14 +17,9 @@ func TestEvents(t *testing.T) {
 		go func(n int) {
 			ctx := context.TODO()
 			events := evts.Subscribe(ctx, 0)
-			cpt := 0
-			for {
+			for j := 0; j < 2; j++ {
 				evt := <-events
 				fmt.Println(n, "evt : ", evt)
-				cpt++
-				if cpt == 2 {
-					break
-				}
 			}
 			wait.Done()
 			fmt.Println("Waiting done")
