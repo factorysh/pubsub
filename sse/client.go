@@ -41,9 +41,7 @@ func (s *SSEReader) Read() (*_event.Event, error) {
 }
 
 func event(evt *_event.Event, key, value string) {
-	if strings.HasPrefix(value, " ") {
-		value = value[1:]
-	}
+	value = strings.TrimPrefix(value, " ")
 	if strings.HasSuffix(value, "\r") {
 		value = value[:len(value)-1]
 	}
