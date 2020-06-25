@@ -30,7 +30,12 @@ func HandleSSE(ctx context.Context, e *_event.Events, w http.ResponseWriter, l *
 		select {
 		case evt = <-evts:
 			evt.Id = fmt.Sprintf("%d", lei)
-			WriteEvent(w, evt)
+			err := WriteEvent(w, evt)
+			if err != nil {
+				log.WithError(err).Error()
+				// lets kill the http connection
+				return
+			}
 			flusher.Flush()
 			lei++
 			if evt.Ending {
