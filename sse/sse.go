@@ -17,7 +17,7 @@ func HandleSSE(ctx context.Context, e *_event.Events, w http.ResponseWriter, l *
 	}
 	ctx2, cancel := context.WithCancel(context.TODO())
 	defer cancel()
-	evts := e.Subscribe(ctx2, lei)
+	evts := e.SubscribeSince(ctx2, lei)
 	h := w.Header()
 	// https://html.spec.whatwg.org/multipage/server-sent-events.html
 	h.Set("Content-Type", "text/event-stream")

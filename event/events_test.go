@@ -16,7 +16,7 @@ func TestEvents(t *testing.T) {
 	for i := 0; i < 2; i++ {
 		go func(n int) {
 			ctx := context.TODO()
-			events := evts.Subscribe(ctx, 0)
+			events := evts.SubscribeSince(ctx, 0)
 			for j := 0; j < 2; j++ {
 				evt := <-events
 				fmt.Println(n, "evt : ", evt)
@@ -52,7 +52,7 @@ func TestMoreEvents(t *testing.T) {
 	wait := &sync.WaitGroup{}
 	wait.Add(4)
 	ctx1 := context.TODO()
-	client1 := evts.Subscribe(ctx1, 0)
+	client1 := evts.SubscribeSince(ctx1, 0)
 	go func() {
 		evt := <-client1
 		assert.Equal(t, "prems", evt.Data)
@@ -67,7 +67,7 @@ func TestMoreEvents(t *testing.T) {
 	})
 
 	ctx2 := context.TODO()
-	client2 := evts.Subscribe(ctx2, 0)
+	client2 := evts.SubscribeSince(ctx2, 0)
 	go func() {
 		evt := <-client2
 		assert.Equal(t, "prems", evt.Data)
