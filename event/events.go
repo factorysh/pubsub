@@ -61,9 +61,7 @@ func (e *Events) Subscribe(ctx context.Context, since int) chan *Event {
 	}
 	e.lock.RUnlock()
 	go func() {
-		select {
-		case <-ctx.Done():
-		}
+		<-ctx.Done()
 		e.block.Lock()
 		delete(e.broadcast, bid)
 		e.block.Unlock()
