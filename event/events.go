@@ -2,6 +2,7 @@ package event
 
 import (
 	"context"
+	"fmt"
 	"sync"
 )
 
@@ -9,10 +10,12 @@ import (
 type Events struct {
 	prems     func(context.Context) *Event
 	events    []*Event
-	bid       int64
+	bid       int64 //Broadcast id
+	eid       int64 //Event id
 	broadcast map[int64]*subscriber
 	block     sync.RWMutex
 	lock      sync.RWMutex
+	elock     sync.Mutex
 }
 
 type subscriber struct {
@@ -31,6 +34,13 @@ func NewEvents() *Events {
 // SetPrems sent the initial Event when a client subscribe
 func (e *Events) SetPrems(prems func(context.Context) *Event) {
 	e.prems = prems
+}
+
+func (e *Events) NextEventId() string {
+	e.elock.Lock()
+	defer e.elock.Unlock()
+	e.eid++
+	return fmt.Sprintf("%d", e.eid)
 }
 
 func (e *Events) nextBid() int64 {

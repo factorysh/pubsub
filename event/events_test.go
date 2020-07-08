@@ -79,3 +79,9 @@ func TestMoreEvents(t *testing.T) {
 
 	wait.Wait()
 }
+
+func TestEventId(t *testing.T) {
+	evts := NewEvents()
+	assert.Equal(t, "1", evts.NextEventId())
+	assert.Equal(t, "2", evts.NextEventId())
+}
